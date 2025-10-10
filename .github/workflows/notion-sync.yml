@@ -1,3 +1,4 @@
+# GPT SuperThanks
 name: Sync Notion to README
 
 on:
@@ -13,25 +14,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Node.js 설치 (Notion2GitHub 사용)
+      # 2️⃣ Node.js 설치
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      # 3️⃣ Notion2GitHub 설치
-      - name: Install Notion2GitHub
-        run: npm install -g notion2github
-
-      # 4️⃣ Notion 문서 가져와서 README.md 갱신
+      # 3️⃣ Notion2GitHub 실행 (npx 사용)
       - name: Run Notion Sync
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
         run: |
-          notion2github -t $NOTION_TOKEN -p $NOTION_PAGE_ID -f README.md
+          npx notion2github -t $NOTION_TOKEN -p $NOTION_PAGE_ID -f README.md --debug
 
-      # 5️⃣ 변경사항 커밋 & 푸시
+      # 4️⃣ 변경사항 커밋 & 푸시
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
