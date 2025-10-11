@@ -4,7 +4,7 @@ name: Sync Notion to README
 on:
   schedule:
     - cron: "0 * * * *" # 매시간 0분마다 실행
-  workflow_dispatch: # 수동 실행 가능
+  workflow_dispatch:
 
 jobs:
   update-readme:
@@ -14,21 +14,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Node.js 설치
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # 2️⃣ Python 설치
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          node-version: "20"
+          python-version: "3.11"
 
-      # 3️⃣ Notion2GitHub 실행 (npx 사용)
+      # 3️⃣ requests 설치
+      - name: Install dependencies
+        run: pip install requests
+
+      # 4️⃣ Notion → README 실행
       - name: Run Notion Sync
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
-        run: |
-          npx notion2github -t $NOTION_TOKEN -p $NOTION_PAGE_ID -f README.md --debug
+        run: python notion_to_readme.py
 
-      # 4️⃣ 변경사항 커밋 & 푸시
+      # 5️⃣ 변경사항 커밋 & 푸시
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
